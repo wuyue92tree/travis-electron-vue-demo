@@ -1,5 +1,7 @@
 # travis-electron-vue-demo
 
+[![Build Status](https://travis-ci.org/wuyue92tree/travis-electron-vue-demo.svg?branch=master)](https://travis-ci.org/wuyue92tree/travis-electron-vue-demo)
+
 通过vue-cli及vue-cli-plugin-electron-builder插件创建electron-vue项目
 
 
@@ -51,6 +53,20 @@ vue add vue-cli-plugin-electron-builder
 ```
 yarn add electron@<version> -D
 ```
+
+## 本地调试
+```
+yarn electron:serve
+```
+
+## 本地编译
+```
+yarn electron:build
+```
+
+## 持续集成
+
+通过travis设置仅允许master有提交时触发，结合electron-builder的publish实现持续集成。
 
 # FAQ
 
