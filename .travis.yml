@@ -1,7 +1,7 @@
 matrix:
   include:
     - os: osx
-      osx_image: xcode11.2
+      osx_image: xcode10.2
       language: node_js
       node_js: "10"
       env:
@@ -13,21 +13,15 @@ matrix:
       language: generic
 
 cache:
-  yarn: true
   directories:
     - node_modules
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
 
-install:
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      brew install yarn;
-    fi
 script:
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-      # windows
+      # windows & linux
       docker run --rm \
         --env-file <(env | grep -vE '\r|\n' | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_') \
         --env ELECTRON_CACHE="/root/.cache/electron" \
@@ -36,17 +30,7 @@ script:
         -v ~/.cache/electron:/root/.cache/electron \
         -v ~/.cache/electron-builder:/root/.cache/electron-builder \
         electronuserland/builder:wine \
-        /bin/bash -c "yarn install && yarn electron:release --win"
-      # linux
-      docker run --rm \
-        --env-file <(env | grep -vE '\r|\n' | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_') \
-        --env ELECTRON_CACHE="/root/.cache/electron" \
-        --env ELECTRON_BUILDER_CACHE="/root/.cache/electron-builder" \
-        -v ${PWD}:/project \
-        -v ~/.cache/electron:/root/.cache/electron \
-        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
-        electronuserland/builder:wine \
-        /bin/bash -c "yarn install && yarn electron:release"
+        /bin/bash -c "yarn --link-duplicates --pure-lockfile && yarn electron:release --linux --win"
     else
       # Disable Code Signing
       export CSC_IDENTITY_AUTO_DISCOVERY=false;
@@ -56,18 +40,6 @@ script:
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine
 
-deploy:
-  provider: releases
-  skip_cleanup: true
-  draft: true
-  overwrite: true
-  api_key:
-    secure: rEJb4YmC1RhlQ5+gNYXrM3BPfQJzf14ValK9RXMOMJZVRHq/pmuUteNUPqmiARYp9IeLKas5sf4KY0pTCK9W/GD3X8LhHUdej77AS+M7tilpRq/a9bPnpKaK4ItbZ8r1ACgoU/CdSHJJlni94aVFos9rTsMhdtQ44HEZA7AWOzJjLFG+y65CRlEBxrK2YJa4BcXcIMlKwA1hD0Z5jbACuDhymsbw0JSosnEyNMqopRsSrll7lGSP/6J/ElYHic0WWR4OXm2b1yti4J20zeanOWk8f6yGSjHUTZcZ4WQD67CIwZU+EySEkdGN5jmaunq+PAd+QU8eiPE9m/Ui1Zq7WsaVc/NFDFUmIatFG75wXWpeNeGfQuLoSLU/oD7bkNqnB2fh+2ECmv6xKDBI7l+y7NSOxAUj19vmv7C1qY3dXHK0qCBoayb8KpX83bxQvK5a2Ftnybu9lCkR3SID639M9ZnvxkfQ66GbRrRqETT/w9fjBDAOE6jn4Na6IEmRD/cjZEX/CVVQF9oby2UMgPjtNwgVGvzP7VrZEws7bpSJNLKA2eyDCpbYdS1ikFW1dxXwWB1QhID/3iMl//8HX6Cr816ETLk+Ov4YMmIY0vM9RvQ5uLSLkHrwNuJvwrz/NC8p2yB27XFR6gCD2H/Mr05PwwA4Qj2WtyotMd5qAOlUy3I=
-  on:
-    repo: wuyue92tree/travis-electron-vue-demo
-    tag: true
-    all_branches: true
 branches:
   except:
-    - develop
-    - master
+    - "/^v\\d+\\.\\d+\\.\\d+$/"

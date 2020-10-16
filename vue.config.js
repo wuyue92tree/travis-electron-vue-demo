@@ -12,10 +12,24 @@ module.exports = {
           createDesktopShortcut: true,
           createStartMenuShortcut: true
         },
+        dmg: {
+          contents: [
+            {
+              x: 110,
+              y: 150
+            },
+            {
+              x: 440,
+              y: 150,
+              type: 'link',
+              path: '/Applications'
+            }
+          ],
+          artifactName: '${name}-setup-${os}-${arch}-${version}.${ext}'
+        },
         mac: {
           icon: 'icon/darwin/icon.icns',
-          artifactName: '${name}-setup-${os}-${arch}-${version}.${ext}',
-          target: 'pkg'
+          artifactName: '${name}-setup-${os}-${arch}-${version}.${ext}'
         },
         win: {
           icon: 'icon/win32/icon.ico',
