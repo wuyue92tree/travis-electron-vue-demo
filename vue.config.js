@@ -14,17 +14,23 @@ module.exports = {
         },
         mac: {
           icon: 'icon/darwin/icon.icns',
-          artifactName: '${name}-setup-${version}.${ext}',
+          artifactName: '${name}-setup-${os}-${arch}-${version}.${ext}',
           target: 'pkg'
         },
         win: {
           icon: 'icon/win32/icon.ico',
-          artifactName: '${name}-setup-${version}.${ext}'
+          artifactName: '${name}-setup-${os}-${arch}-${version}.${ext}'
         },
         linux: {
           icon: 'icon/linux/icon.png',
-          artifactName: '${name}-setup-${version}.${ext}'
-        }
+          artifactName: '${name}-setup-${os}-${arch}-${version}.${ext}'
+        },
+        publish: [
+          {
+            provider: 'github',
+            releaseType: 'release'
+          }
+        ]
       }
     }
   }
